@@ -21,16 +21,17 @@ class AWing(nn.Module):
         lossMat[case2_ind] = A[case2_ind]*torch.abs(y[case2_ind]-y_pred[case2_ind]) - C[case2_ind]
         return lossMat
 
+
 class Loss_weighted(nn.Module):
     def __init__(self, W=10, alpha=2.1, omega=14, epsilon=1, theta=0.5):
         super().__init__()
         self.W = float(W)
         self.Awing = AWing(alpha, omega, epsilon, theta)
 
-    def forward(self, y_pred , y, M):
+    def forward(self, y_pred, y, M):
         M = M.float()
-        Loss = self.Awing(y_pred,y)
-        weighted = Loss * (self.W * M + 1.)
+        Loss = self.Awing(y_pred, y)
+        weighted = Loss * (self.W * M.unsqueeze(1) + 1.)
         return weighted.mean()
 
 if __name__=="__main__":
